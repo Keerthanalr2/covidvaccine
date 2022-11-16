@@ -1,0 +1,88 @@
+#User Use cases
+
+def showusers():
+    c1 = db1.cursor()
+    c1.execute("select * from users")
+    res = c1.fetchall()
+    #print(res)
+    print("List of Users ")
+    for val in res:
+        print("UserName = "+val[0] + " Password = " + val[1])
+
+def login():
+    print("-" * 50)
+    print("\t COVID VACCINATION RECORD")
+    print("-" * 50)
+    print("\t LOGIN")
+    un = input("Enter User Name : ")
+    pw = input("Enter Password : ")
+    q = "select * from users where username = %s and passw = %s"
+    val = (un,pw)
+    c2 = db1.cursor()
+    c2.execute(q,val)
+    res = c2.fetchall()
+    print("-" * 50)
+    if len(res) == 0:
+        print("Invalid User Name or Password ")
+        print("-" * 50)
+        return False
+    else:
+        print("Access Granted !!!")
+        print("-" * 50)
+        return True
+
+from cowin_api import coWinAPI
+states = cowin.get_states()
+print("All States List :")
+print(states)
+
+PINCODE = "0"
+while len(PINCODE) != 6:
+    PINCODE = input("Enter the pincode for which you want the status => ")
+    if len(PINCODE) < 6:
+        print (f"{PINCODE} is shorter than the actual length")
+    elif len(PINCODE) > 6:
+        print (f"{PINCODE} is longer than the actual length")
+    
+REQ_DATE = input ("Enter the Date to get status (Date format: DD-MM-YYYY) => ")
+
+request_link = "pincode={PINCODE}&date={REQ_DATE}"
+response = request.get(request_link)
+raw_JSON = response.json()
+
+Total_centers = len(raw_JSON['centers'])
+print ()
+print (" ")
+print (f"Date: {REQ_DATE} | Pincode: {PINCODE} ")
+
+if Total_centers != 0:
+    print (f"Total centers in your area is: {Total_centers}" )
+else:
+    print (f"Unfortunately !! Seems like no center in this area / Kindly re-check the Pincode" )
+print ()
+
+for cent in range(Total_centers):
+    print ()
+    print (f"[{cent+1}] Center Name:", raw_JSON['centers'][cent]['name'])
+    print (" ")
+    print ("   Date      Vaccine Type    Minimum Age    Available ")
+    print (" ")
+    this_session = raw_JSON['centers'][cent]['sessions']
+    
+    for _sess in range(len(this_session)):
+        print ( "{0:^12} {1:^12} {2:^14} {3:^16} ".format(this_session[_sess]['date'], 
+                this_session[_sess]['vaccine'], this_session[_sess]['min_age_limit'],
+                   this_session[_sess]['available_capacity']))
+date_str =[x.strtime("	DD-MM-YYYY")
+for x in date_list]
+for INP_DATE in date_str:
+    URL = "https://cdn-api.co-
+vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=
+{}&date={}".format(DIST_ID, INP_DATE)
+    response = requests.get(URL)
+    if response.ok:
+        resp_json = response.json()
+        if resp_json["centers"]:
+            print("You can book vaccine slots on {}".format(INP_DATE))
+        else:
+            print("No available slots on {}".format(INP_DATE))
